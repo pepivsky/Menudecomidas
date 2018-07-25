@@ -44,6 +44,12 @@ public class DummyContent {
         ITEM_MAP.put(comida.getId(),comida);
     }
 
+    //método para borrar
+    public static void EliminarComida(Comida comida){
+        ITEMS.remove(comida);
+        ITEM_MAP.remove(comida);
+    }
+
     private static Comida createDummyItem(int position) {
         return new Comida(String.valueOf(position), "Item " + position, makeDetails(position));
     }

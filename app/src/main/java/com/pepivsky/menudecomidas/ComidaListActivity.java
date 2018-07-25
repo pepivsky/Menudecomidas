@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -120,26 +121,36 @@ public class ComidaListActivity extends AppCompatActivity {
                 comida.setId(dataSnapshot.getKey());
 
                 //añadir el elemento al arreglo para generar la lista
-                if (DummyContent.ITEMS.contains(comida)) { //Si no contiene el objeto comida entonces lo agrega
+                if (DummyContent.ITEMS.contains(comida)) { //Si existe actualizalo
                     DummyContent.ActualizarComida(comida);
                 }
                 //Refrescar el adaptador
                 recyclerView.getAdapter().notifyDataSetChanged();
             }
 
+            //Método que se ejecuta al borrar un elemento de la lista
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
+                DummyContent.Comida comida = dataSnapshot.getValue(DummyContent.Comida.class);
+                //Asignar el valor "clave" que es generada automaticamente al id de nuestro objeto comida
+                comida.setId(dataSnapshot.getKey());
 
+                //añadir el elemento al arreglo para generar la lista
+                if (DummyContent.ITEMS.contains(comida)) { //Si existe actualizalo
+                    DummyContent.EliminarComida(comida);
+                }
+                //Refrescar el adaptador
+                recyclerView.getAdapter().notifyDataSetChanged();
             }
-
+            //Método que se ejcuta cuando un elemento cambia su posición en la lista
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
+                Toast.makeText(ComidaListActivity.this, "Movido", Toast.LENGTH_SHORT).show();
             }
-
+            //Método que se ejecuta cuando se cancela una acción
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                Toast.makeText(ComidaListActivity.this, "Cancelado", Toast.LENGTH_SHORT).show();
             }
         });
     }
