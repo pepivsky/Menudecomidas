@@ -112,9 +112,19 @@ public class ComidaListActivity extends AppCompatActivity {
                 recyclerView.getAdapter().notifyDataSetChanged();
             }
 
+            //Método que se ejecuta al detectar cambios en los elementos de la lista
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                DummyContent.Comida comida = dataSnapshot.getValue(DummyContent.Comida.class);
+                //Asignar el valor "clave" que es generada automaticamente al id de nuestro objeto comida
+                comida.setId(dataSnapshot.getKey());
 
+                //añadir el elemento al arreglo para generar la lista
+                if (DummyContent.ITEMS.contains(comida)) { //Si no contiene el objeto comida entonces lo agrega
+                    DummyContent.ActualizarComida(comida);
+                }
+                //Refrescar el adaptador
+                recyclerView.getAdapter().notifyDataSetChanged();
             }
 
             @Override

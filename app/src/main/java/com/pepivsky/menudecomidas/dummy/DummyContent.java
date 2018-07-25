@@ -37,6 +37,12 @@ public class DummyContent {
         ITEMS.add(item);
         ITEM_MAP.put(item.id, item);
     }
+//Método para actualizar
+    public static void ActualizarComida(Comida comida){
+        //insertar objeto en la posicion adecuada
+        ITEMS.set(ITEMS.indexOf(comida), comida);//Buscar  posicion y después pasa el objeto para ser remplazado
+        ITEM_MAP.put(comida.getId(),comida);
+    }
 
     private static Comida createDummyItem(int position) {
         return new Comida(String.valueOf(position), "Item " + position, makeDetails(position));
