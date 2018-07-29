@@ -41,7 +41,7 @@ import butterknife.OnClick;
 public class ComidaListActivity extends AppCompatActivity {
 
     //Constante
-    private  static final String PATH_FOOD = "comida";
+    private static final String PATH_FOOD = "comida";
 
     @BindView(R.id.edtNombre)
     EditText edtNombre;
@@ -88,7 +88,7 @@ public class ComidaListActivity extends AppCompatActivity {
     }
 
 
-//Leer datos de Firebase
+    //Leer datos de Firebase
     private void setupRecyclerView(@NonNull final RecyclerView recyclerView) {
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, DummyContent.ITEMS, mTwoPane));
         //Instancia de firebase
@@ -142,11 +142,13 @@ public class ComidaListActivity extends AppCompatActivity {
                 //Refrescar el adaptador
                 recyclerView.getAdapter().notifyDataSetChanged();
             }
+
             //Método que se ejcuta cuando un elemento cambia su posición en la lista
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
                 Toast.makeText(ComidaListActivity.this, "Movido", Toast.LENGTH_SHORT).show();
             }
+
             //Método que se ejecuta cuando se cancela una acción
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -156,7 +158,7 @@ public class ComidaListActivity extends AppCompatActivity {
     }
 
 
-//Método del botón guardar  Insertar objetos en firebase
+    //Método del botón guardar  Insertar objetos en firebase
     @OnClick(R.id.btnGuardar)
     public void onViewClicked() {
         DummyContent.Comida comida = new DummyContent.Comida(edtNombre.getText().toString().trim(),
@@ -204,6 +206,7 @@ public class ComidaListActivity extends AppCompatActivity {
             }
         };
 
+
         SimpleItemRecyclerViewAdapter(ComidaListActivity parent,
                                       List<DummyContent.Comida> items,
                                       boolean twoPane) {
@@ -220,14 +223,27 @@ public class ComidaListActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
+        public void onBindViewHolder(final ViewHolder holder, final int position) {
             //holder.mIdView.setText(mValues.get(position).getId());
             //Mostrar el precio
             holder.mIdView.setText("$" + mValues.get(position).getPrecio());
             holder.mContentView.setText(mValues.get(position).getNombre());
 
+
             holder.itemView.setTag(mValues.get(position));
             holder.itemView.setOnClickListener(mOnClickListener);
+            //Listener para borrar
+            holder.btnDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Instancia de Firebase
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    //Referencia de Firebase
+                    DatabaseReference reference = database.getReference(PATH_FOOD);
+                    //Obtener el objeto seleccionado de la lista mdeidante el id y eliminarlo con el método "removeValue"
+                    reference.child(mValues.get(position).getId()).removeValue();
+                }
+            });
         }
 
         @Override
@@ -238,9 +254,14 @@ public class ComidaListActivity extends AppCompatActivity {
         class ViewHolder extends RecyclerView.ViewHolder {
             final TextView mIdView;
             final TextView mContentView;
+            //Botón Borrar
+            @BindView(R.id.btnDelete)
+            Button btnDelete;
 
             ViewHolder(View view) {
                 super(view);
+                //Para el botón de borrar
+                ButterKnife.bind(this,view);
                 mIdView = (TextView) view.findViewById(R.id.id_text);
                 mContentView = (TextView) view.findViewById(R.id.nombre);
             }
